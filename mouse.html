@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas</title>
+    <style>
+        canvas{
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        var canvas = document.getElementById('canvas');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        var ctx = canvas.getContext("2d");
+
+        var circleArr = [];
+
+        //圆函数
+        function Circle(x, y, r, color){
+            this.x = x;
+            this.y = y;
+            this.r = r;
+            this.color = "rgb(" + (parseInt(Math.random() * 240) + 9) + "," + (parseInt(Math.random() * 220) +18) + ", 203)";
+
+            this.dx = Math.random() * 12 -7;
+            this.dy = Math.random() * 12 -7;
+
+            circleArr.push(this);
+        }
+
+        Circle.prototype.render = function(){
+            //画一个简单得颜色球状
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.r, 0, Math.PI*2, true);
+            ctx.fillStyle = this.color;
+            ctx.fill();
+        };
+
+        Circle.prototype.update = function(){
+            this.x += this.dx;
+            this.y += this.dy;
+            this.r--;
+
+            if (this.r < 0){
+                for(var i = 0; i < circleArr.length; i++){
+                    if(circleArr[i] === this){
+                        circleArr.splice(i,1);
+                    };
+                }
+                return false;
+            }
+            return true;
+        };
+
+        canvas.onmousemove = function (event) {
+            new Circle(event.clientX, event.clientY, 30, "green");
+        };
+
+        //定时器
+        setInterval(function () {
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+            for (var i = 0; i < circleArr.length; i++){
+                circleArr[i].update() && circleArr[i].render();
+                console.log(circleArr[i]);
+            }
+        }, 20);
+    </script>
+</body>
+</html>
